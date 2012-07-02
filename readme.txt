@@ -40,7 +40,7 @@ After selecting your options and saving the widget settings, the widget will the
 5. Add a the shortcode to your post like so: `[document-list-attachments]`
 6. Test that the this plugin meets your demanding needs.
 7. Rate the plugin and verify that it works at wordpress.org.
-8. Leave a comment regarding bugs, feature request at: http://wordpress.org/tags/
+8. Leave a comment regarding bugs, feature request at: http://wordpress.org/tags/document-attachment-widget
 
 == Frequently Asked Questions ==
 == Screenshots ==
