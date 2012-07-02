@@ -1,0 +1,55 @@
+/* Document attachment widget style sheet */
+
+.attachement {
+  margin: 0;
+  padding: 7px 0;
+  list-style: none;
+}
+
+li {
+  padding: 2px 0 2px 25px;
+}
+
+.powerpoint {
+  background: url('../icons/pp_icon.gif') no-repeat 0 0;
+}
+
+.csv, .txt, .plain {
+  background: url('../icons/txt_icon.gif') no-repeat 0 0;
+}
+
+.msword {
+  background: url('../icons/word_icon.gif') no-repeat scroll 0 0;
+}
+
+.pdf {
+  background: url('../icons/pdf_icon.gif') no-repeat 0 0;
+}
+
+.excel {
+  background: url('../icons/excel_icon.gif') no-repeat 0 0;
+}
+
+.gif {
+  background: url('../icons/gif_icon.gif') no-repeat 0 0;
+}
+
+.png {
+  background: url('../icons/png_icon.gif') no-repeat 0 0;
+}
+
+.jpeg {
+  background: url('../icons/jpg_icon.gif') no-repeat 0 0;
+}
+
+.x-shockwave-flash {
+  background: url('../icons/swf_icon.gif') no-repeat 0 0;
+}
+
+.filesize {
+  font-size: 9px;
+}
+
+.description {
+  font-style: italic;
+}
