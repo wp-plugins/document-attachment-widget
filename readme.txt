@@ -1,5 +1,5 @@
 === Document Attachment Widget ===
-Contributors: Geansai .Ltd
+Contributors: Geansai
 Tags: widget, list, related, attachments, sidebar, uploaded, files, shortcode, plugin
 Requires at least: 3
 Tested up to: 3.4.1
