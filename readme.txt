@@ -49,6 +49,10 @@ After selecting your options and saving the widget settings, the widget will the
 2. This screen grab displays what the `Document Attachment Widget` will look like on the front-end of your website, when all widget options have been selected.
 
 == Changelog ==
+= 1.1 =
+* Enhanced the document attachment widget and added the functionality to hide the widget from the sidebar, so you can use the short-code to only display 
+the widget within the content area of the page.
+
 
 = 1.0 =
 * Enhanced documentation and moved the plugin over to the plugin oven.

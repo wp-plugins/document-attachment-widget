@@ -5,7 +5,7 @@ Plugin URI: http://geansai.co.uk
 Description: This is a plugin to add a new wiget to wordpress, which finds all media items attached to the selected page or post. 
 Use [document-list-attachments] shortcode to list these attachments.
 
-Version: 1.0
+Version: 1.1
 Author: Geansai .Ltd
 Author URI: http://geansai.co.uk
 License: GPLv2 or later
@@ -58,8 +58,8 @@ class Attachment_Widget extends WP_Widget {
 		$opt_flash = $instance['flash_doc'];
 		$opt_size = $instance['doc_size'];
 		$opt_description = $instance['doc_description'];
+		$opt_hide_sidebar = $instance['hide_sidebar'];
 		
-				
 		// Check to see what mime types the widget should display.
 		if($opt_msword == '1'):
 			array_push($mime_type_array, "'application/msword'");
@@ -102,37 +102,71 @@ class Attachment_Widget extends WP_Widget {
 			if(isset($showresults)):
 							
 				$quick_check = count($showresults);	
-				if(!$quick_check ==0){						
-				echo '<div class="attachement_holder">';
-				echo $before_title . $title . $after_title;
-				echo '<ul class="attachement">';
-								
-				// loop over the results
-				foreach($showresults as $application):
-					$application_type = explode('/', $application->post_mime_type);
-						// Determine mime type and set the file type icon class
-						$icon = $application_type[1];
-						if ($icon =='vnd.ms-powerpoint'):
-							$icon = 'powerpoint';
-						endif;
-						if ($icon =='vnd.ms-excel'):
-							$icon = 'excel';
-						endif;
+				if(!$quick_check ==0){
+					if(isset($args['id'])) :
+						if (isset($opt_hide_sidebar)):						
+							if($opt_hide_sidebar == '0'):
+								echo '<div class="attachement_holder">';
+								echo $before_title . $title . $after_title;
+								echo '<ul class="attachement">';								
+								// loop over the results
+								foreach($showresults as $application):
+									$application_type = explode('/', $application->post_mime_type);
+									// Determine mime type and set the file type icon class
+									$icon = $application_type[1];
+									if ($icon =='vnd.ms-powerpoint'):
+										$icon = 'powerpoint';
+									endif;
+									if ($icon =='vnd.ms-excel'):
+										$icon = 'excel';
+									endif;
 						
-						// check to see if the document description should be displayed
-						if($opt_description == '1'):
-							$description = '<span class="description">'.$application->post_content.'</span>';
+									// check to see if the document description should be displayed
+									if($opt_description == '1'):
+										$description = '<span class="description">'.$application->post_content.'</span>';
+									else:
+										$description = '';
+									endif;
+						
+									// print the final output to the page
+									$file_url = $application->guid;										
+									echo '<li class="'.$icon.'"><a title="Download the '.$application->post_title.'" href="'.$application->guid.'">'.$application->post_title.'</a><span class="filesize"> '.getfilesize($file_url, $opt_size).'</span><br />'.$description.'</li>';
+								endforeach;
+								echo '</ul>';
+								echo '</div>';
+							endif;
+						endif;
+
 						else:
-							$description = '';
-						endif;
+						echo '<div class="attachement_holder">';
+						echo $before_title . $title . $after_title;
+						echo '<ul class="attachement">';								
+						// loop over the results
+						foreach($showresults as $application):
+							$application_type = explode('/', $application->post_mime_type);
+							// Determine mime type and set the file type icon class
+							$icon = $application_type[1];
+							if ($icon =='vnd.ms-powerpoint'):
+								$icon = 'powerpoint';
+							endif;
+							if ($icon =='vnd.ms-excel'):
+								$icon = 'excel';
+							endif;
 						
-						// print the final output to the page
-						$file_url = $application->guid;										
-						echo '<li class="'.$icon.'"><a title="Download the '.$application->post_title.'" href="'.$application->guid.'">'.$application->post_title.'</a><span class="filesize"> '.getfilesize($file_url, $opt_size).'</span><br />'.$description.'</li>';
-				endforeach;
-				echo '</ul>';
-				echo '</div>';
-	
+							// check to see if the document description should be displayed
+							if($opt_description == '1'):
+								$description = '<span class="description">'.$application->post_content.'</span>';
+							else:
+								$description = '';
+							endif;
+						
+							// print the final output to the page
+							$file_url = $application->guid;										
+							echo '<li class="'.$icon.'"><a title="Download the '.$application->post_title.'" href="'.$application->guid.'">'.$application->post_title.'</a><span class="filesize"> '.getfilesize($file_url, $opt_size).'</span><br />'.$description.'</li>';
+						endforeach;
+						echo '</ul>';
+						echo '</div>';
+					endif;	
 				}			
 			endif;	
 
@@ -143,7 +177,7 @@ class Attachment_Widget extends WP_Widget {
 	/** @see WP_Widget::update */
 	function update( $new_instance, $old_instance ) {
 		$instance = $old_instance;
-		$new_instance = wp_parse_args( (array) $new_instance, array( 'title' => '','word_doc' => '','excel_doc' => '','pdf_doc' => '','image_doc' => '','flash_doc' => '','doc_size' => '','doc_description' => '') );
+		$new_instance = wp_parse_args( (array) $new_instance, array( 'title' => '','word_doc' => '','excel_doc' => '','pdf_doc' => '','image_doc' => '','flash_doc' => '','doc_size' => '','doc_description' => '','hide_sidebar' => '') );
 		$instance['title'] = strip_tags($new_instance['title']);
 		$instance['word_doc'] = $new_instance['word_doc'] ? 1 : 0;		
 		$instance['excel_doc'] = $new_instance['excel_doc'] ? 1 : 0;
@@ -152,6 +186,7 @@ class Attachment_Widget extends WP_Widget {
 		$instance['flash_doc'] = $new_instance['flash_doc'] ? 1 : 0;		
 		$instance['doc_size'] = $new_instance['doc_size'] ? 1 : 0;
 		$instance['doc_description'] = $new_instance['doc_description'] ? 1 : 0;
+		$instance['hide_sidebar'] = $new_instance['hide_sidebar'] ? 1 : 0;
 			
 		return $instance;
 	}
@@ -159,7 +194,7 @@ class Attachment_Widget extends WP_Widget {
 	/** @see WP_Widget::form */
 	function form( $instance ) {
 		if ( $instance ) {			
-			$instance = wp_parse_args( (array) $instance, array( 'title' => '','word_doc' => '','excel_doc' => '','pdf_doc' => '','image_doc' => '','flash_doc' => '','doc_size' => '','doc_description' => '') );
+			$instance = wp_parse_args( (array) $instance, array( 'title' => '','word_doc' => '','excel_doc' => '','pdf_doc' => '','image_doc' => '','flash_doc' => '','doc_size' => '','doc_description' => '', 'hide_sidebar' => '') );
 			$title = esc_attr($instance['title']);
 			$opt_msword = $instance['word_doc'] ? 'checked="checked"' : '';			
 			$opt_msexcel = $instance['excel_doc'] ? 'checked="checked"' : '';
@@ -168,6 +203,7 @@ class Attachment_Widget extends WP_Widget {
 			$opt_flash = $instance['flash_doc'] ? 'checked="checked"' : '';
 			$opt_size = $instance['doc_size'] ? 'checked="checked"' : '';
 			$opt_description = $instance['doc_description'] ? 'checked="checked"' : '';
+			$opt_hide_sidebar = $instance['hide_sidebar'] ? 'checked="checked"' : '';
 		}
 		else {
 			$title =  'Document attachments';
@@ -178,6 +214,7 @@ class Attachment_Widget extends WP_Widget {
 			$opt_flash = '';
 			$opt_size = '';
 			$opt_description = '';
+			$opt_hide_sidebar = '';
 		}
 		echo 
 		'<p><label for="'.$this->get_field_id('title').'">'._e('Title:').'</label> 
@@ -189,11 +226,14 @@ class Attachment_Widget extends WP_Widget {
 		<input class="checkbox" type="checkbox" '.$opt_image.' id="'.$this->get_field_id('image_doc').'" name="'.$this->get_field_name('image_doc').'" /> <label for="'.$this->get_field_name('image_doc').'">Images</label><br />		
 		<input class="checkbox" type="checkbox" '.$opt_flash.' id="'.$this->get_field_id('flash_doc').'" name="'.$this->get_field_name('flash_doc').'" /> <label for="'.$this->get_field_name('flash_doc').'">Adobe Flash</label></p>
 		<hr />		
+		<p><em>Hide the widget from the sidebar if using short code:</em><br />
+		<input class="checkbox" type="checkbox" '.$opt_hide_sidebar.' id="'.$this->get_field_id('hide_sidebar').'" name="'.$this->get_field_name('hide_sidebar').'" /> <label for="'.$this->get_field_name('hide_sidebar').'">Hide from sidebars</label></p>
+		<hr />	
 		<p><em>Display the file size:</em><br />
-		<input class="checkbox" type="checkbox" '.$opt_size.' id="'.$this->get_field_id('doc_size').'" name="'.$this->get_field_name('doc_size').'" /> <label for="'.$this->get_field_name('doc_size').'">Show file size</label>
-		<hr />			
+		<input class="checkbox" type="checkbox" '.$opt_size.' id="'.$this->get_field_id('doc_size').'" name="'.$this->get_field_name('doc_size').'" /> <label for="'.$this->get_field_name('doc_size').'">Show file size</label></p>
+		<hr />				
 		<p><em>Display the files description text:</em><br />
-		<input class="checkbox" type="checkbox" '.$opt_description.' id="'.$this->get_field_id('doc_description').'" name="'.$this->get_field_name('doc_description').'" /> <label for="'.$this->get_field_name('doc_description').'">Show description text</label><br />';
+		<input class="checkbox" type="checkbox" '.$opt_description.' id="'.$this->get_field_id('doc_description').'" name="'.$this->get_field_name('doc_description').'" /> <label for="'.$this->get_field_name('doc_description').'">Show description text</label></p><br />';
 
 	}
 
@@ -219,5 +259,21 @@ function document_list_attachments() {
 }
 // Add the shortcode action
 add_shortcode('document-list-attachments','document_list_attachments'); 
+
+
+// added a new function to remove the saved widget values from the database to fix version conflicts
+class daw_activation {
+	static function drop_daw_data() {
+		global $wpdb;
+		$option_title = 'widget_document_attachments';
+		$force_delete = true;
+		$option_name = $wpdb->get_var( "SELECT option_name FROM $wpdb->options WHERE option_name = '" . $option_title . "'" );
+		delete_option($option_name);
+	}
+}
+
+// Call activation hooks
+register_activation_hook( __FILE__, array('daw_activation', 'drop_daw_data'));
+register_deactivation_hook( __FILE__, array('daw_activation', 'drop_daw_data'));
 
 ?>
