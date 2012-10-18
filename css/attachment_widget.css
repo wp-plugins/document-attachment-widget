@@ -1,55 +1,57 @@
 /* Document attachment widget style sheet */
 
-.attachement {
+.widget_document_attachments .attachment {
   margin: 0;
   padding: 7px 0;
   list-style: none;
 }
 
-li {
+.widget_document_attachments li {
   padding: 2px 0 2px 25px;
 }
 
-.powerpoint {
+.widget_document_attachments .powerpoint {
   background: url('../icons/pp_icon.gif') no-repeat 0 0;
 }
 
-.csv, .txt, .plain {
+.widget_document_attachments .csv, 
+.widget_document_attachments .txt, 
+.widget_document_attachments .plain {
   background: url('../icons/txt_icon.gif') no-repeat 0 0;
 }
 
-.msword {
+.widget_document_attachments .msword {
   background: url('../icons/word_icon.gif') no-repeat scroll 0 0;
 }
 
-.pdf {
+.widget_document_attachments .pdf {
   background: url('../icons/pdf_icon.gif') no-repeat 0 0;
 }
 
-.excel {
+.widget_document_attachments .excel {
   background: url('../icons/excel_icon.gif') no-repeat 0 0;
 }
 
-.gif {
+.widget_document_attachments .gif {
   background: url('../icons/gif_icon.gif') no-repeat 0 0;
 }
 
-.png {
+.widget_document_attachments .png {
   background: url('../icons/png_icon.gif') no-repeat 0 0;
 }
 
-.jpeg {
+.widget_document_attachments .jpeg {
   background: url('../icons/jpg_icon.gif') no-repeat 0 0;
 }
 
-.x-shockwave-flash {
+.widget_document_attachments .x-shockwave-flash {
   background: url('../icons/swf_icon.gif') no-repeat 0 0;
 }
 
-.filesize {
+.widget_document_attachments .filesize {
   font-size: 9px;
 }
 
-.description {
+.widget_document_attachments .description {
   font-style: italic;
 }
