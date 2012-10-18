@@ -7,10 +7,10 @@
 */
 	
 /**************** Function to load CSS for front end screen *************/
-function attachement_css() {
-	wp_enqueue_style('attachement-css', trailingslashit(WP_PLUGIN_URL.'/'.str_replace(basename( __FILE__),"",str_replace('/includes', '',plugin_basename(__FILE__)))) . 'css/attachment_widget.css');
+function attachment_css() {
+	wp_enqueue_style('attachment-css', trailingslashit(WP_PLUGIN_URL.'/'.str_replace(basename( __FILE__),"",str_replace('/includes', '',plugin_basename(__FILE__)))) . 'css/attachment_widget.css');
 }
 
 /**************** Call function and add action *************/	
-add_action( 'wp_print_styles', 'attachement_css');
+add_action( 'wp_print_styles', 'attachment_css');
 ?>

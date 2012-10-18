@@ -5,7 +5,7 @@ Plugin URI: http://geansai.co.uk
 Description: This is a plugin to add a new wiget to wordpress, which finds all media items attached to the selected page or post. 
 Use [document-list-attachments] shortcode to list these attachments.
 
-Version: 1.1
+Version: 1.2
 Author: Geansai .Ltd
 Author URI: http://geansai.co.uk
 License: GPLv2 or later
@@ -27,7 +27,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-// load the style sheets for the document attachement widget
+// load the style sheets for the document attachment widget
 	include_once 'includes/load_styles.php';
 
 // Function to determine file size of remote files
@@ -51,6 +51,8 @@ class Attachment_Widget extends WP_Widget {
 		$mime_type_array = array();
 		
 		$title = apply_filters( 'widget_title', $instance['title'] );
+		$limit = $instance['limit']; // NEW 
+		
 		$opt_msword = $instance['word_doc'];			
 		$opt_msexcel = $instance['excel_doc'];
 		$opt_pdf = $instance['pdf_doc'];
@@ -89,14 +91,23 @@ class Attachment_Widget extends WP_Widget {
 			
 		// build list of mime types as a string to use within the db query
 		$mime_type_str = implode(", ", $mime_type_array);		
-		echo $before_widget;	
+		echo $before_widget;
+		
+		if($limit == 0):
+			$limit=1;
+		endif;
+			
 		if ( $title ):
 		   $post_id = $post->ID;
 			// check to see if post id is set.
+			
+			
 			if(isset($post_id)):
 				// Query the post table to find all attachment items related to the post parent ID 			
-				$showresults = $wpdb->get_results("SELECT * FROM `{$wpdb->prefix}posts` WHERE post_type = 'attachment' AND post_mime_type IN ($mime_type_str) AND post_parent = $post_id");				
+				$showresults = $wpdb->get_results("SELECT * FROM `{$wpdb->prefix}posts` WHERE post_type = 'attachment' AND post_mime_type IN ($mime_type_str) AND post_parent = $post_id LIMIT $limit");				
 			endif;
+			
+			
 			
 			// check to see if there are any attachment documents found in the database.
 			if(isset($showresults)):
@@ -106,9 +117,9 @@ class Attachment_Widget extends WP_Widget {
 					if(isset($args['id'])) :
 						if (isset($opt_hide_sidebar)):						
 							if($opt_hide_sidebar == '0'):
-								echo '<div class="attachement_holder">';
+								echo '<div class="attachment_holder">';
 								echo $before_title . $title . $after_title;
-								echo '<ul class="attachement">';								
+								echo '<ul class="attachment">';								
 								// loop over the results
 								foreach($showresults as $application):
 									$application_type = explode('/', $application->post_mime_type);
@@ -138,9 +149,9 @@ class Attachment_Widget extends WP_Widget {
 						endif;
 
 						else:
-						echo '<div class="attachement_holder">';
+						echo '<div class="attachment_holder">';
 						echo $before_title . $title . $after_title;
-						echo '<ul class="attachement">';								
+						echo '<ul class="attachment">';								
 						// loop over the results
 						foreach($showresults as $application):
 							$application_type = explode('/', $application->post_mime_type);
@@ -177,8 +188,13 @@ class Attachment_Widget extends WP_Widget {
 	/** @see WP_Widget::update */
 	function update( $new_instance, $old_instance ) {
 		$instance = $old_instance;
-		$new_instance = wp_parse_args( (array) $new_instance, array( 'title' => '','word_doc' => '','excel_doc' => '','pdf_doc' => '','image_doc' => '','flash_doc' => '','doc_size' => '','doc_description' => '','hide_sidebar' => '') );
+		$new_instance = wp_parse_args( (array) $new_instance, array( 'title' => '','limit' => '','word_doc' => '','excel_doc' => '','pdf_doc' => '','image_doc' => '','flash_doc' => '','doc_size' => '','doc_description' => '','hide_sidebar' => '') );
+	
+	
 		$instance['title'] = strip_tags($new_instance['title']);
+		
+		$instance['limit'] = strip_tags($new_instance['limit']); // NEW
+		
 		$instance['word_doc'] = $new_instance['word_doc'] ? 1 : 0;		
 		$instance['excel_doc'] = $new_instance['excel_doc'] ? 1 : 0;
 		$instance['pdf_doc'] = $new_instance['pdf_doc'] ? 1 : 0;
@@ -194,8 +210,12 @@ class Attachment_Widget extends WP_Widget {
 	/** @see WP_Widget::form */
 	function form( $instance ) {
 		if ( $instance ) {			
-			$instance = wp_parse_args( (array) $instance, array( 'title' => '','word_doc' => '','excel_doc' => '','pdf_doc' => '','image_doc' => '','flash_doc' => '','doc_size' => '','doc_description' => '', 'hide_sidebar' => '') );
+			$instance = wp_parse_args( (array) $instance, array( 'title' => '','limit' => '','word_doc' => '','excel_doc' => '','pdf_doc' => '','image_doc' => '','flash_doc' => '','doc_size' => '','doc_description' => '', 'hide_sidebar' => '') );
 			$title = esc_attr($instance['title']);
+			// NEW
+			
+			$limit = $instance['limit']; // NEW 
+			
 			$opt_msword = $instance['word_doc'] ? 'checked="checked"' : '';			
 			$opt_msexcel = $instance['excel_doc'] ? 'checked="checked"' : '';
 			$opt_pdf = $instance['pdf_doc'] ? 'checked="checked"' : '';
@@ -207,6 +227,7 @@ class Attachment_Widget extends WP_Widget {
 		}
 		else {
 			$title =  'Document attachments';
+			$limit = '20';
 			$opt_msword = '';			
 			$opt_msexcel = '';
 			$opt_pdf = '';
@@ -219,6 +240,10 @@ class Attachment_Widget extends WP_Widget {
 		echo 
 		'<p><label for="'.$this->get_field_id('title').'">'._e('Title:').'</label> 
 		<input class="widefat" id="'.$this->get_field_id('title').'" name="'.$this->get_field_name('title').'" type="text" value="'.$title.'" /></p>
+		
+		<p><label for="'.$this->get_field_id('limit').'">Limit the number of items returned.</label> 
+		<input class="widefat" id="'.$this->get_field_id('limit').'" name="'.$this->get_field_name('limit').'" type="text" value="'.$limit.'" /></p>
+		
 		<p><em>Select attachment file types,<br />which are allowed to be displayed:</em><br />
 		<input class="checkbox" type="checkbox" '.$opt_msword.' id="'.$this->get_field_id('word_doc').'" name="'.$this->get_field_name('word_doc').'" /> <label for="'.$this->get_field_name('word_doc').'">MS Word</label><br />		
 		<input class="checkbox" type="checkbox" '.$opt_msexcel.' id="'.$this->get_field_id('excel_doc').'" name="'.$this->get_field_name('excel_doc').'" /> <label for="'.$this->get_field_name('excel_doc').'">MS Excel</label><br />		
