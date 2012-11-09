@@ -5,7 +5,7 @@ Plugin URI: http://geansai.co.uk
 Description: This is a plugin to add a new wiget to wordpress, which finds all media items attached to the selected page or post. 
 Use [document-list-attachments] shortcode to list these attachments.
 
-Version: 1.2
+Version: 1.3
 Author: Geansai .Ltd
 Author URI: http://geansai.co.uk
 License: GPLv2 or later
@@ -91,7 +91,14 @@ class Attachment_Widget extends WP_Widget {
 			
 		// build list of mime types as a string to use within the db query
 		$mime_type_str = implode(", ", $mime_type_array);		
-		echo $before_widget;
+		
+		if(isset($showresults)):
+			$quick_check = count($showresults);	
+				if(!$quick_check ==0){
+					echo $before_widget;
+				}
+		endif;
+		
 		
 		if($limit == 0):
 			$limit=1;
@@ -182,7 +189,13 @@ class Attachment_Widget extends WP_Widget {
 			endif;	
 
 		endif;
-		echo $after_widget;
+		if(isset($showresults)):
+			$quick_check = count($showresults);	
+				if(!$quick_check ==0){
+					echo $after_widget;
+				}
+		endif;
+		
 	}
 
 	/** @see WP_Widget::update */
