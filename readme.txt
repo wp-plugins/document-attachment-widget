@@ -49,6 +49,9 @@ After selecting your options and saving the widget settings, the widget will the
 2. This screen grab displays what the `Document Attachment Widget` will look like on the front-end of your website, when all widget options have been selected.
 
 == Changelog ==
+= 1.4 =
+* Fixed the issue with improper html markup. 
+
 = 1.3 =
 * Fixed the issue with the widget showing on pages that have no attachments. 
 

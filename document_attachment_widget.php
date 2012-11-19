@@ -5,7 +5,7 @@ Plugin URI: http://geansai.co.uk
 Description: This is a plugin to add a new wiget to wordpress, which finds all media items attached to the selected page or post. 
 Use [document-list-attachments] shortcode to list these attachments.
 
-Version: 1.3
+Version: 1.4
 Author: Geansai .Ltd
 Author URI: http://geansai.co.uk
 License: GPLv2 or later
@@ -124,7 +124,7 @@ class Attachment_Widget extends WP_Widget {
 					if(isset($args['id'])) :
 						if (isset($opt_hide_sidebar)):						
 							if($opt_hide_sidebar == '0'):
-								echo '<div class="attachment_holder">';
+								echo '<section class="attachment_holder widget_document_attachments">';
 								echo $before_title . $title . $after_title;
 								echo '<ul class="attachment">';								
 								// loop over the results
@@ -151,12 +151,12 @@ class Attachment_Widget extends WP_Widget {
 									echo '<li class="'.$icon.'"><a title="Download the '.$application->post_title.'" href="'.$application->guid.'">'.$application->post_title.'</a><span class="filesize"> '.getfilesize($file_url, $opt_size).'</span><br />'.$description.'</li>';
 								endforeach;
 								echo '</ul>';
-								echo '</div>';
+								echo '</section>';
 							endif;
 						endif;
 
 						else:
-						echo '<div class="attachment_holder">';
+						echo '<section class="attachment_holder widget_document_attachments">';
 						echo $before_title . $title . $after_title;
 						echo '<ul class="attachment">';								
 						// loop over the results
@@ -183,7 +183,7 @@ class Attachment_Widget extends WP_Widget {
 							echo '<li class="'.$icon.'"><a title="Download the '.$application->post_title.'" href="'.$application->guid.'">'.$application->post_title.'</a><span class="filesize"> '.getfilesize($file_url, $opt_size).'</span><br />'.$description.'</li>';
 						endforeach;
 						echo '</ul>';
-						echo '</div>';
+						echo '</section>';
 					endif;	
 				}			
 			endif;	
